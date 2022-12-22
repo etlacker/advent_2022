@@ -1,0 +1,20 @@
+use std::{collections::{HashSet}};
+
+pub fn part_one(input: &str) -> Option<i32> {
+    let ruksacks = input.split('\n');
+    let mut score = 0;
+    for sack in ruksacks {
+        let (s1, s2) = sack.split_at(sack.len()/2);
+        let first_cmp_val: HashSet<i32> = s1.chars().map(|x| x.to_string().as_bytes()[0] as i32 ).collect();
+        let second_cmp_val: HashSet<i32> = s2.chars().map(|x| x.to_string().as_bytes()[0] as i32 ).collect();
+        let common_val: Vec<&i32> = first_cmp_val.intersection(&second_cmp_val).collect();
+        // let first_cmp: HashSet<String> = s1.chars().map(|x| x.to_string() ).collect();
+        // let second_cmp: HashSet<String> = s2.chars().map(|x| x.to_string() ).collect();
+        // let common: Vec<&String> = first_cmp.intersection(&second_cmp).collect();
+        let numerical = common_val.get(0).unwrap() as &&i32;
+        if **numerical - 96 > 0 { score += **numerical - 96;}
+        else { score += **numerical - 38; }
+        // println!("s: {}, \ns1: {:?}, s2: {:?}, common: {:?}, score: {}", sack, first_cmp, second_cmp, common, score);
+    }
+    return Some(score);
+}
