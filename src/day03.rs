@@ -18,3 +18,25 @@ pub fn part_one(input: &str) -> Option<i32> {
     }
     return Some(score);
 }
+
+pub fn part_two(input: &str) -> Option<i32> {
+    let mut rucksacks = input.split("\n").peekable();
+    let mut score: i32 = 0;
+    while rucksacks.peek() != None {
+        let b1: HashSet<char> = rucksacks.next().unwrap().chars().collect();
+        let b2: HashSet<char> = rucksacks.next().unwrap().chars().collect();
+        let b3: HashSet<char> = rucksacks.next().unwrap().chars().collect();
+        // println!("b1: {:?}\nb2: {:?}\nb3: {:?}", b1, b2, b3);
+
+        let common_vals: HashSet<_> = b1.intersection(&b2).cloned().collect();
+        // println!("common_vals: {:?}", common_vals);
+        let common_val: Vec<&char> = b3.intersection(&common_vals).collect();
+        // println!("common_val: {:?}", common_val);
+
+        let numerical = **common_val.get(0).unwrap() as i32;
+        // println!("{}", numerical);
+        if numerical - 96 > 0 { score += numerical - 96;}
+        else { score += numerical - 38; }
+    }
+    return Some(score);
+}

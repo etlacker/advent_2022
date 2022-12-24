@@ -12,7 +12,7 @@ fn main() {
     let start_time = Instant::now();
     // println!("Day 1 Part 1: Highest: {:?}", day01::part_one(&input).unwrap());
     // println!("Day 1 Part 2: Sum of Highest 3: {:?}", day01::part_two(&input).unwrap());
-    println!("Day 3 Part 1: Score: {:?}", day03::part_one(&input).unwrap());
+    println!("Day 3 Part 1: Score: {:?}", day03::part_two(&input).unwrap());
     println!("Total time: {:?}", Instant::now() - start_time);
 
 }
