@@ -29,7 +29,7 @@ def part_one():
             for i in range(0, int(ammount)):
                 stacks[int(stack_b)].append(stacks[int(stack_a)].pop())
 
-    print('Day1: ')
+    print('Part1: ')
     print(stacks)
 
 
@@ -55,7 +55,7 @@ def part_two():
             while temp:
                 stacks[int(stack_b)].append(temp.pop())
 
-    print('Day2: ')
+    print('Part2: ')
     print(stacks)
 
 
