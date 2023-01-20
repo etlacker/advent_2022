@@ -88,8 +88,24 @@ def sum_of_lt_tenk_dirs(node):
             return 0
 
 
+def find_smallest_needed(node, target_size):
+    print(f'Node: {node.name}\t\tSize: {node.size}\t\tDirs: {node.dirs}')
+    possible_dirs = []
+    if node.dirs != []:
+        for dir in node.dirs:
+            possible_dirs.extend(find_smallest_needed(dir, target_size))
+        if node.size >= target_size:
+            return possible_dirs.extend([node.size])
+        else:
+            return possible_dirs
+    else:
+        if node.size >= target_size:
+            return [node.size]
+        else:
+            return [0]
 
-def part_one():
+
+def main():
 
     directory = directory_node('/', None, None)
     directory.root = directory
@@ -106,11 +122,12 @@ def part_one():
     print('Storage size calculated.')
 
     print('\nFinding directories and summing...')
-    return sum_of_lt_tenk_dirs(directory)
+    print(f'Part One: {sum_of_lt_tenk_dirs(directory)}')
 
-
-def main():
-    print("Part 1: ", part_one())
+    print('Finding smallest directory above 30000000...')
+    possible = find_smallest_needed(directory, 30000000 - (70000000 - directory.size))
+    print(type(possible), possible)
+    print(f'Should delete dir of size: {possible.sort()[0]}')
 
 
 if __name__ == "__main__":
