@@ -19,38 +19,74 @@ class directory_node:
 
 
 def consume(node, stack):
-    command = stack[0].strip()
-    print('--> start\tcommand: ', command, '\tcurrent dir: ', node.name)
-    if command == 'end':
+    if len(stack) <= 1:
         return node.root
+    command = stack[0].strip()
+    # print('--> start\tcommand: ', command, '\tcurrent dir: ', node.name)
     if command[0] == '$':
         if command[2:4] == 'cd':
             if command[5] == '/':
-                consume(node.root, stack[1:])
+                return consume(node.root, stack[1:])
             elif command[5] == '.':
-                consume(node.prev, stack[1:])
+                return consume(node.prev, stack[1:])
             else:
                 for dir in node.dirs:
-                    print(f'\tcmd[5:] -> [{command[5:].strip()}], dir.name -> [{dir.name}]')
+                    # print(
+                    #     f'\tcmd[5:] -> [{command[5:].strip()}], dir.name -> [{dir.name}]')
                     if dir.name == command[5:].strip():
-                        consume(dir, stack[1:])
-                print(f'\t\tNo Match for {command[5:]} in ', node.dirs)
+                        return consume(dir, stack[1:])
+                # print(f'\t\tNo Match for {command[5:]} in ', node.dirs)
         elif command[2:4] == 'ls':
             index = 1
             while True:
+                # print('while -> ', stack[index].strip())
                 if stack[index][0] != '$':
                     if stack[index][0].isnumeric():
-                        print(f'\tAdding File: {stack[index].split()[1].strip()}')
-                        node.files.append(i.strip() for i in stack[index].split())
+                        file = stack[index].split(' ')
+                        node.files.append((file[0].strip(), file[1].strip()))
                         index += 1
-                    elif stack[index].strip() != 'end':
-                        print(f'\tAdding Dir: {stack[index].split()[1].strip()}')
-                        node.dirs.append(directory_node(stack[index].split()[1].strip(), node, node.root))
+                    elif stack[index].strip() != 'end end':
+                        dir = stack[index].split(' ')
+                        node.dirs.append(directory_node(
+                            dir[1].strip(), node, node.root))
                         index += 1
+                    else:
+                        return
+                elif stack[index].strip() == 'end end':
+                    return node.root
                 else:
-                    if stack[index] == 'end end':
-                        break
-                    consume(node, stack[index:])
+                    return consume(node, stack[index:])
+
+
+def calculate_storage_size(node):
+    size = 0
+    if node.files != []:
+        # print(f'Node: {node.name}\tfiles: {[x for x in node.files]}')
+        for file in node.files:
+            size += int(file[0])
+    if node.dirs != []:
+        for dir in node.dirs:
+            size += calculate_storage_size(dir)
+    node.size = size
+    return size
+
+
+def sum_of_lt_tenk_dirs(node):
+    # print(f'Node: {node.name}\tSize: {node.size}')
+    branch_size = 0
+    if node.dirs != []:
+        for dir in node.dirs:
+            branch_size += sum_of_lt_tenk_dirs(dir)
+        if node.size <= 100000:
+            return node.size + branch_size
+        else:
+            return branch_size
+    else:
+        if node.size <= 100000:
+            return node.size
+        else:
+            return 0
+
 
 
 def part_one():
@@ -61,9 +97,16 @@ def part_one():
     with open('inputs/07.txt', 'r') as input:
         commands = input.readlines()
 
+    print('Consuming...')
     consume(directory, commands)
+    print('Consumed all commands.')
 
-    directory.pretty_print()
+    print('\nCalculating storage sizes...')
+    calculate_storage_size(directory)
+    print('Storage size calculated.')
+
+    print('\nFinding directories and summing...')
+    return sum_of_lt_tenk_dirs(directory)
 
 
 def main():
