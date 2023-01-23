@@ -11,11 +11,12 @@ class directory_node:
         self.prev = prev
         self.root = root
 
-    def pretty_print(self):
-        if self.dirs != []:
-            for dir in self.dirs:
-                dir.pretty_print()
-        print(self.name, self.files)
+    def pretty_print(self, level=0):
+        print('\t' * level + f'Dir: {repr(self.name)}')
+        for file in self.files:
+            print('\t' * level + f'\t--> f: {file[1]}')
+        for dir in self.dirs:
+            dir.pretty_print(level + 1)
 
 
 def consume(node, stack):
@@ -89,20 +90,15 @@ def sum_of_lt_tenk_dirs(node):
 
 
 def find_smallest_needed(node, target_size):
-    print(f'Node: {node.name}\t\tSize: {node.size}\t\tDirs: {node.dirs}')
-    possible_dirs = []
+    if not node:
+        return []
+    result = []
+    if node.size >= target_size:
+        result.append(node.size)
     if node.dirs != []:
         for dir in node.dirs:
-            possible_dirs.extend(find_smallest_needed(dir, target_size))
-        if node.size >= target_size:
-            return possible_dirs.extend([node.size])
-        else:
-            return possible_dirs
-    else:
-        if node.size >= target_size:
-            return [node.size]
-        else:
-            return [0]
+            result += find_smallest_needed(dir, target_size)
+    return result
 
 
 def main():
@@ -124,10 +120,14 @@ def main():
     print('\nFinding directories and summing...')
     print(f'Part One: {sum_of_lt_tenk_dirs(directory)}')
 
-    print('Finding smallest directory above 30000000...')
-    possible = find_smallest_needed(directory, 30000000 - (70000000 - directory.size))
-    print(type(possible), possible)
-    print(f'Should delete dir of size: {possible.sort()[0]}')
+    # directory.pretty_print()
+
+    print(
+        f'Finding smallest directory above {(30000000 - (70000000 - directory.size))}...')
+    possible = find_smallest_needed(
+        directory, (30000000 - (70000000 - directory.size)))
+    possible.sort()
+    print(f'Part Two: Should delete dir of size: {possible[0]}')
 
 
 if __name__ == "__main__":
